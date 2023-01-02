@@ -418,8 +418,8 @@
   DebugLib|OvmfPkg/Library/PlatformDebugLibIoPort/PlatformDebugLibIoPort.inf
 !endif
   PciLib|MdePkg/Library/BasePciLibPciExpress/BasePciLibPciExpress.inf
-  PciPcdProducerLib|OvmfPkg/Fdt/FdtPciPcdProducerLib/FdtPciPcdProducerLib.inf
-  PciExpressLib|OvmfPkg/Library/BaseCachingPciExpressLib/BaseCachingPciExpressLib.inf
+  #PciPcdProducerLib|OvmfPkg/Fdt/FdtPciPcdProducerLib/FdtPciPcdProducerLib.inf
+  #PciExpressLib|OvmfPkg/Library/BaseCachingPciExpressLib/BaseCachingPciExpressLib.inf
 
 [LibraryClasses.common.DXE_SMM_DRIVER]
   PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
