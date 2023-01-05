@@ -61,7 +61,7 @@ ConstructSecHobList (
 }
 
 /**
- * This function is to find a memory region which is the largest one below 4GB.
+ * This function is to find a memory region which is the highest one below 4GB.
  * It will be used as the firmware hoblist.
  *
  * @param VmmHobList    Vmm passed hoblist which constains the memory information.
@@ -96,7 +96,7 @@ ConstructFwHobList (
         ResourceLength = Hob.ResourceDescriptor->ResourceLength;
 
         if (PhysicalEnd <= BASE_4GB) {
-          if (ResourceLength > LowMemoryLength) {
+          if (PhysicalEnd > LowMemoryStart + LowMemoryLength) {
             LowMemoryStart  = Hob.ResourceDescriptor->PhysicalStart;
             LowMemoryLength = ResourceLength;
           }
