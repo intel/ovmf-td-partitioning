@@ -539,13 +539,14 @@ SetOrClearSharedBit (
   Status = TdVmCall (TDVMCALL_MAPGPA, PhysicalAddress, Length, 0, 0, NULL);
 
   //
-  // If changing shared to private, must accept-page again
+  // If changing shared to private, must accept-page again if needed
   //
   if (Mode == ClearSharedBit) {
     Status = gBS->LocateProtocol (&gEdkiiMemoryAcceptProtocolGuid, NULL, (VOID **)&MemoryAcceptProtocol);
-    ASSERT (!EFI_ERROR (Status));
-    Status = MemoryAcceptProtocol->AcceptMemory (MemoryAcceptProtocol, PhysicalAddress, Length);
-    ASSERT (!EFI_ERROR (Status));
+    if (!EFI_ERROR (Status)) {
+      Status = MemoryAcceptProtocol->AcceptMemory (MemoryAcceptProtocol, PhysicalAddress, Length);
+      ASSERT (!EFI_ERROR (Status));
+    }
   }
 
   DEBUG ((

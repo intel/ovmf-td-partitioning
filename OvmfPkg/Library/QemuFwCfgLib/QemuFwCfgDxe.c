@@ -415,7 +415,7 @@ InternalQemuFwCfgDmaBytes (
   // When SEV or TDX is enabled, map Buffer to DMA address before issuing the DMA
   // request
   //
-  if (MemEncryptSevIsEnabled () || MemEncryptTdxIsEnabled ()) {
+  if (MemEncryptSevIsEnabled () || TdIsEnabled ()) {
     VOID                  *AccessBuffer;
     EFI_PHYSICAL_ADDRESS  DataBufferAddress;
 
