@@ -61,3 +61,57 @@ TdIsEnabled (
 
   return TdEnabled;
 }
+
+/**
+  Probe if TD Partitioning is enabled.
+
+  @return TRUE    TD Partitioning is enabled.
+  @return FALSE   TD Partitioning is not enabled.
+**/
+BOOLEAN
+EFIAPI
+TdpIsEnabled (
+  )
+{
+  UINT32                  Eax;
+  UINT32                  Ebx;
+  UINT32                  Ecx;
+  UINT32                  Edx;
+  UINT32                  LargestEax;
+  BOOLEAN                 TdpEnabled;
+  CPUID_VERSION_INFO_ECX  CpuIdVersionInfoEcx;
+
+  TdpEnabled = FALSE;
+
+  do {
+    AsmCpuid (CPUID_SIGNATURE, &LargestEax, &Ebx, &Ecx, &Edx);
+
+    if (  (Ebx != CPUID_SIGNATURE_GENUINE_INTEL_EBX)
+       || (Edx != CPUID_SIGNATURE_GENUINE_INTEL_EDX)
+       || (Ecx != CPUID_SIGNATURE_GENUINE_INTEL_ECX))
+    {
+      break;
+    }
+
+    AsmCpuid (CPUID_VERSION_INFO, NULL, NULL, &CpuIdVersionInfoEcx.Uint32, NULL);
+    if (CpuIdVersionInfoEcx.Bits.ParaVirtualized == 0) {
+      break;
+    }
+
+    if (LargestEax < CPUID_GUESTTD_RUNTIME_ENVIRONMENT) {
+      break;
+    }
+
+    AsmCpuidEx (CPUID_GUESTTD_RUNTIME_ENVIRONMENT, 0, &Eax, &Ebx, &Ecx, &Edx);
+    if (  (Ebx != CPUID_GUESTTD_SIGNATURE_GENUINE_INTEL_EBX)
+       || (Edx != CPUID_GUESTTDP_SIGNATURE_GENUINE_INTEL_EDX)
+       || (Ecx != CPUID_GUESTTD_SIGNATURE_GENUINE_INTEL_ECX))
+    {
+      break;
+    }
+
+    TdpEnabled = TRUE;
+  } while (FALSE);
+
+  return TdpEnabled;
+}
