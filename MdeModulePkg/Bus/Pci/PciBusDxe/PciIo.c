@@ -1830,8 +1830,7 @@ GetMmioAddressTranslationOffset (
   //
   // The resource occupied by BAR should be in the range reported by RootBridge.
   //
-  ASSERT (FALSE);
-  return (UINT64)-1;
+  return (UINT64)0;
 }
 
 /**
