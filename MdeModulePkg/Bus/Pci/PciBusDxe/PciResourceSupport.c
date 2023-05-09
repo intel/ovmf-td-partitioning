@@ -6,6 +6,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
+#include <PiDxe.h>
+#include <Library/DxeServicesTableLib.h>
 #include "PciBus.h"
 
 //
@@ -408,6 +410,59 @@ CalculateResourceAperture (
 }
 
 /**
+  Allocate Length of MMIO or IO resource with alignment BitsOfAlignment
+  from GCD at BaseAddress.
+
+  @param Mmio            TRUE for MMIO and FALSE for IO.
+  @param Length          Length of the resource to allocate.
+  @param BitsOfAlignment Alignment of the resource to allocate.
+  @param BaseAddress     The starting address the allocation is from.
+
+  @retval  The base address of the allocated resource or MAX_UINT64 if allocation
+           fails.
+**/
+UINT64
+AllocateResource (
+  BOOLEAN  Mmio,
+  UINT64   Length,
+  UINTN    BitsOfAlignment,
+  UINT64   BaseAddress
+  )
+{
+  EFI_STATUS  Status;
+
+  if ((BaseAddress & (LShiftU64 (1, BitsOfAlignment) - 1)) == 0) {
+    if (Mmio) {
+      Status = gDS->AllocateMemorySpace (
+                      EfiGcdAllocateAddress,
+                      EfiGcdMemoryTypeMemoryMappedIo,
+                      BitsOfAlignment,
+                      Length,
+                      &BaseAddress,
+                      gImageHandle,
+                      NULL
+                      );
+    } else {
+      Status = gDS->AllocateIoSpace (
+                      EfiGcdAllocateAddress,
+                      EfiGcdIoTypeIo,
+                      BitsOfAlignment,
+                      Length,
+                      &BaseAddress,
+                      gImageHandle,
+                      NULL
+                      );
+    }
+
+    if (!EFI_ERROR (Status)) {
+      return BaseAddress;
+    }
+  }
+
+  return MAX_UINT64;
+}
+
+/**
   Get IO/Memory resource info for given PCI device.
 
   @param PciDev     Pci device instance.
@@ -429,6 +484,8 @@ GetResourceFromDevice (
   )
 {
   UINT8              Index;
+  UINTN              BitsOfAlignment;
+  UINT64             BaseAddress;
   PCI_RESOURCE_NODE  *Node;
   BOOLEAN            ResourceRequested;
 
@@ -439,6 +496,18 @@ GetResourceFromDevice (
     switch ((PciDev->PciBar)[Index].BarType) {
       case PciBarTypeMem32:
       case PciBarTypeOpRom:
+
+        if ((PciDev->PciBar)[Index].BaseAddress != 0) {
+          BitsOfAlignment = LowBitSet64 ((PciDev->PciBar)[Index].Length);
+          BaseAddress = AllocateResource (
+                          TRUE,
+                          (PciDev->PciBar)[Index].Length,
+                          MIN (31, BitsOfAlignment),
+                          (PciDev->PciBar)[Index].BaseAddress
+                          );
+          ASSERT (BaseAddress == (PciDev->PciBar)[Index].BaseAddress);
+          break;
+        }
 
         Node = CreateResourceNode (
                  PciDev,
@@ -459,6 +528,18 @@ GetResourceFromDevice (
 
       case PciBarTypeMem64:
 
+        if ((PciDev->PciBar)[Index].BaseAddress != 0) {
+          BitsOfAlignment = LowBitSet64 ((PciDev->PciBar)[Index].Length);
+          BaseAddress = AllocateResource (
+                          TRUE,
+                          (PciDev->PciBar)[Index].Length,
+                          MIN (63, BitsOfAlignment),
+                          (PciDev->PciBar)[Index].BaseAddress
+                          );
+          ASSERT (BaseAddress == (PciDev->PciBar)[Index].BaseAddress);
+          break;
+        }
+
         Node = CreateResourceNode (
                  PciDev,
                  (PciDev->PciBar)[Index].Length,
@@ -477,6 +558,18 @@ GetResourceFromDevice (
         break;
 
       case PciBarTypePMem64:
+
+        if ((PciDev->PciBar)[Index].BaseAddress != 0) {
+          BitsOfAlignment = LowBitSet64 ((PciDev->PciBar)[Index].Length);
+          BaseAddress = AllocateResource (
+                          TRUE,
+                          (PciDev->PciBar)[Index].Length,
+                          MIN (63, BitsOfAlignment),
+                          (PciDev->PciBar)[Index].BaseAddress
+                          );
+          ASSERT (BaseAddress == (PciDev->PciBar)[Index].BaseAddress);
+          break;
+        }
 
         Node = CreateResourceNode (
                  PciDev,
@@ -497,6 +590,18 @@ GetResourceFromDevice (
 
       case PciBarTypePMem32:
 
+        if ((PciDev->PciBar)[Index].BaseAddress != 0) {
+          BitsOfAlignment = LowBitSet64 ((PciDev->PciBar)[Index].Length);
+          BaseAddress = AllocateResource (
+                          TRUE,
+                          (PciDev->PciBar)[Index].Length,
+                          MIN (31, BitsOfAlignment),
+                          (PciDev->PciBar)[Index].BaseAddress
+                          );
+          ASSERT (BaseAddress == (PciDev->PciBar)[Index].BaseAddress);
+          break;
+        }
+
         Node = CreateResourceNode (
                  PciDev,
                  (PciDev->PciBar)[Index].Length,
@@ -515,6 +620,18 @@ GetResourceFromDevice (
 
       case PciBarTypeIo16:
       case PciBarTypeIo32:
+
+        if ((PciDev->PciBar)[Index].BaseAddress != 0) {
+          BitsOfAlignment = LowBitSet64 ((PciDev->PciBar)[Index].Length);
+          BaseAddress = AllocateResource (
+                          FALSE,
+                          (PciDev->PciBar)[Index].Length,
+                          MIN (15, BitsOfAlignment),
+                          (PciDev->PciBar)[Index].BaseAddress
+                          );
+          ASSERT (BaseAddress == (PciDev->PciBar)[Index].BaseAddress);
+          break;
+        }
 
         Node = CreateResourceNode (
                  PciDev,

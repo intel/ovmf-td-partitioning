@@ -66,6 +66,7 @@
   PcdLib
   DevicePathLib
   UefiBootServicesTableLib
+  DxeServicesTableLib
   MemoryAllocationLib
   ReportStatusCodeLib
   BaseMemoryLib
