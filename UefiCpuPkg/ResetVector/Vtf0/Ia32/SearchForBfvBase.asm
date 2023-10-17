@@ -32,6 +32,7 @@ BITS    32
 Flat32SearchForBfvBase:
 
     xor     eax, eax
+    sub     eax, 0x200000
 searchingForBfvHeaderLoop:
     ;
     ; We check for a firmware volume at every 4KB address in the top 16MB
@@ -75,6 +76,7 @@ checkingFvLength:
     jne     searchingForBfvHeaderLoop
     mov     ebx, eax
     add     ebx, dword [eax + 0x20]
+    add     ebx, 0x200000
     jnz     searchingForBfvHeaderLoop
 
     jmp     searchedForBfvHeaderAndItWasFound
