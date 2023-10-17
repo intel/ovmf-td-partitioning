@@ -97,7 +97,7 @@ ConstructFwHobList (
         ResourceLength = Hob.ResourceDescriptor->ResourceLength;
 
         if (PhysicalEnd <= BASE_4GB) {
-          if (ResourceLength > LowMemoryLength) {
+          if (PhysicalEnd > LowMemoryStart + LowMemoryLength) {
             LowMemoryStart  = Hob.ResourceDescriptor->PhysicalStart;
             LowMemoryLength = ResourceLength;
           }
