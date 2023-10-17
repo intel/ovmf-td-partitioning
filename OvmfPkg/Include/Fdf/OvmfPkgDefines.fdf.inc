@@ -103,4 +103,4 @@ SET gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase = gUefiOvmfPk
 SET gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase   = gUefiOvmfPkgTokenSpaceGuid.PcdOvmfFlashNvStorageFtwSpareBase
 !endif
 
-DEFINE MEMFD_BASE_ADDRESS = 0x800000
+DEFINE MEMFD_BASE_ADDRESS = 0x40000000
