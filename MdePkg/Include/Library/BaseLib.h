@@ -4930,6 +4930,16 @@ TdIsEnabled (
   VOID
   );
 
+/**
+  Probe if TD Partitioning is enabled.
+
+  @return TRUE    TD Partitioning is enabled.
+  @return FALSE   TD Partitioning is not enabled.
+**/
+BOOLEAN
+EFIAPI
+TdpIsEnabled (
+  );
 #endif
 
 #if defined (MDE_CPU_X64)
