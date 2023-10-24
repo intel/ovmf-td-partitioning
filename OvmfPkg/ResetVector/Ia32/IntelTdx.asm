@@ -133,6 +133,7 @@ ReloadFlat32:
     mov     eax, ADDR_OF(gdtr)
     lgdt    [eax]
 
+    jmp     LINEAR_CODE_SEL:dword (0x100000000 - 0x200000 - 16)
     jmp     LINEAR_CODE_SEL:dword ADDR_OF(jumpToFlat32BitAndLandHere)
 
 jumpToFlat32BitAndLandHere:
