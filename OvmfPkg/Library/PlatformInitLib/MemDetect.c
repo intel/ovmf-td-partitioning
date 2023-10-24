@@ -897,7 +897,7 @@ PlatformAddressWidthInitialization (
   }
 
  #if defined (MDE_CPU_X64)
-  if (TdIsEnabled ()) {
+  if (TdIsEnabled () || TdpIsEnabled ()) {
     if (TdSharedPageMask () == (1ULL << 47)) {
       PhysMemAddressWidth = 48;
     } else {

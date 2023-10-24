@@ -36,7 +36,7 @@ IntelTdxInitialize (
  #ifdef MDE_CPU_X64
   RETURN_STATUS  PcdStatus;
 
-  if (!TdIsEnabled ()) {
+  if (!TdIsEnabled () && !TdpIsEnabled ()) {
     return;
   }
 
